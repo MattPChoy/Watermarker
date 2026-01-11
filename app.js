@@ -1,6 +1,7 @@
 // Application State
 const state = {
     images: [],                    // Array of loaded images
+    imageFilenames: [],            // Original filenames
     currentImageIndex: 0,          // Currently displayed image
     watermarkSettings: [],         // Per-image watermark settings
     canvas: null,
@@ -214,6 +215,7 @@ async function loadSingleImage(file, index) {
                 });
 
                 state.images[index] = img;
+                state.imageFilenames[index] = file.name;
                 state.watermarkSettings[index] = { ...defaultWatermarkSettings };
                 state.loadingProgress++;
 
@@ -760,9 +762,14 @@ function downloadImage() {
     tempCanvas.toBlob((blob) => {
         const url = URL.createObjectURL(blob);
         const link = document.createElement('a');
-        const timestamp = new Date().toISOString().replace(/[:.]/g, '-').split('.')[0];
-        const imageNum = state.currentImageIndex + 1;
-        link.download = `watermarked-${imageNum}-${timestamp}.png`;
+
+        // Get original filename and add watermark suffix
+        const originalName = state.imageFilenames[state.currentImageIndex] || 'image.png';
+        const nameParts = originalName.split('.');
+        const extension = nameParts.length > 1 ? nameParts.pop() : 'png';
+        const baseName = nameParts.join('.');
+
+        link.download = `${baseName}-watermarked.${extension}`;
         link.href = url;
 
         document.body.appendChild(link);
@@ -835,8 +842,14 @@ async function downloadAllImages() {
             tempCanvas.toBlob((blob) => {
                 const url = URL.createObjectURL(blob);
                 const link = document.createElement('a');
-                const timestamp = new Date().toISOString().replace(/[:.]/g, '-').split('.')[0];
-                link.download = `watermarked-${i + 1}-${timestamp}.png`;
+
+                // Get original filename and add watermark suffix
+                const originalName = state.imageFilenames[i] || `image-${i + 1}.png`;
+                const nameParts = originalName.split('.');
+                const extension = nameParts.length > 1 ? nameParts.pop() : 'png';
+                const baseName = nameParts.join('.');
+
+                link.download = `${baseName}-watermarked.${extension}`;
                 link.href = url;
 
                 document.body.appendChild(link);
