@@ -126,6 +126,8 @@ function handleFileSelect(e) {
     if (files.length > 0) {
         handleFiles(files);
     }
+    // Reset file input so same files can be selected again
+    e.target.value = '';
 }
 
 // File Processing
@@ -137,10 +139,8 @@ async function handleFiles(files) {
         return;
     }
 
-    // Reset state for new batch of images
-    state.images = [];
-    state.watermarkSettings = [];
-    state.currentImageIndex = 0;
+    // Don't reset - append to existing images
+    const startingIndex = state.images.length;
     state.isLoading = true;
     state.loadingProgress = 0;
     state.totalToLoad = imageFiles.length;
@@ -152,7 +152,7 @@ async function handleFiles(files) {
     try {
         // Load images with batching (2 at a time for better performance)
         const BATCH_SIZE = 2;
-        let firstImageLoaded = false;
+        let firstImageLoaded = state.images.length > 0; // If we already have images, don't show first image again
 
         for (let i = 0; i < imageFiles.length; i += BATCH_SIZE) {
             if (state.cancelLoading) {
@@ -161,7 +161,7 @@ async function handleFiles(files) {
 
             const batch = imageFiles.slice(i, i + BATCH_SIZE);
             const batchPromises = batch.map((file, batchIndex) =>
-                loadSingleImage(file, i + batchIndex)
+                loadSingleImage(file, startingIndex + i + batchIndex)
             );
 
             await Promise.all(batchPromises);
@@ -870,26 +870,8 @@ function showCanvasView() {
 }
 
 function resetToUpload() {
-    uploadSection.style.display = 'block';
-    canvasSection.style.display = 'none';
-    controlsSection.style.display = 'none';
-
-    // Reset state
-    state.images = [];
-    state.watermarkSettings = [];
-    state.currentImageIndex = 0;
-
-    // Reset controls to defaults
-    watermarkTextInput.value = defaultWatermarkSettings.text;
-    opacitySlider.value = defaultWatermarkSettings.opacity * 100;
-    sizeSlider.value = defaultWatermarkSettings.fontSize;
-    rotationSlider.value = defaultWatermarkSettings.rotation;
-    opacityValue.textContent = `${defaultWatermarkSettings.opacity * 100}%`;
-    sizeValue.textContent = `${defaultWatermarkSettings.fontSize}px`;
-    rotationValue.textContent = `${defaultWatermarkSettings.rotation}°`;
-
-    // Reset file input
-    fileInput.value = '';
+    // Trigger file input to add more images
+    fileInput.click();
 }
 
 // Navigation Functions
