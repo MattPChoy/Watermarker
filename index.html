@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Watermarker</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Image Watermarker</h1>
+            <p class="subtitle">Add custom text watermarks to your images - completely client-side</p>
+        </header>
+
+        <main>
+            <!-- Upload Zone -->
+            <section class="upload-section" id="uploadSection">
+                <div class="upload-zone" id="uploadZone">
+                    <svg class="upload-icon" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="17 8 12 3 7 8"></polyline>
+                        <line x1="12" y1="3" x2="12" y2="15"></line>
+                    </svg>
+                    <p class="upload-text">Drag and drop images here</p>
+                    <p class="upload-subtext">or click to browse (multiple files supported)</p>
+                    <input type="file" id="fileInput" accept="image/*" multiple hidden>
+                </div>
+            </section>
+
+            <!-- Canvas Workspace -->
+            <section class="canvas-section" id="canvasSection" style="display: none;">
+                <!-- Image Navigation -->
+                <div class="image-navigation" id="imageNavigation">
+                    <button class="nav-btn" id="prevBtn">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="15 18 9 12 15 6"></polyline>
+                        </svg>
+                    </button>
+                    <span class="image-counter" id="imageCounter">1 / 1</span>
+                    <button class="nav-btn" id="nextBtn">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="9 18 15 12 9 6"></polyline>
+                        </svg>
+                    </button>
+                </div>
+
+                <div class="canvas-container">
+                    <canvas id="canvas"></canvas>
+                </div>
+            </section>
+
+            <!-- Control Panel -->
+            <section class="controls-section" id="controlsSection" style="display: none;">
+                <div class="controls-panel">
+                    <h2>Watermark Settings</h2>
+
+                    <div class="control-group">
+                        <label for="watermarkText">Text</label>
+                        <input type="text" id="watermarkText" value="© MattPChoy 2025" placeholder="Enter watermark text">
+                    </div>
+
+                    <div class="control-group">
+                        <label for="opacitySlider">
+                            Opacity
+                            <span class="value-display" id="opacityValue">50%</span>
+                        </label>
+                        <input type="range" id="opacitySlider" min="0" max="100" value="50">
+                    </div>
+
+                    <div class="control-group">
+                        <label for="sizeSlider">
+                            Size
+                            <span class="value-display" id="sizeValue">48px</span>
+                        </label>
+                        <input type="range" id="sizeSlider" min="10" max="200" value="48">
+                    </div>
+
+                    <div class="control-group">
+                        <label for="rotationSlider">
+                            Rotation
+                            <span class="value-display" id="rotationValue">0°</span>
+                        </label>
+                        <input type="range" id="rotationSlider" min="0" max="360" value="0">
+                    </div>
+
+                    <div class="button-group">
+                        <button class="btn btn-secondary" id="newImageBtn">Upload New Images</button>
+                        <button class="btn btn-secondary" id="downloadBtn">Download Current</button>
+                        <button class="btn btn-primary" id="downloadAllBtn">Download All</button>
+                    </div>
+
+                    <p class="tip">💡 Tip: Click and drag the watermark on the image to reposition it</p>
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            <p>All processing happens in your browser. Your images are never uploaded to a server.</p>
+        </footer>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay" style="display: none;">
+        <div class="loading-content">
+            <div class="loading-spinner">
+                <svg class="spinner-icon" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10" stroke-opacity="0.25"></circle>
+                    <path d="M12 2 A10 10 0 0 1 22 12" stroke-linecap="round"></path>
+                </svg>
+            </div>
+
+            <h3 class="loading-title">Loading Images</h3>
+
+            <div class="progress-container">
+                <div class="progress-bar-bg">
+                    <div class="progress-bar" id="progressBar"></div>
+                </div>
+                <div class="progress-info">
+                    <span class="progress-text" id="progressText">Loading image 0 of 0...</span>
+                    <span class="progress-percent" id="progressPercent">0%</span>
+                </div>
+            </div>
+
+            <button class="btn btn-secondary btn-sm" id="cancelLoadingBtn">Cancel</button>
+
+            <p class="loading-hint">Please wait while we process your images...</p>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
